@@ -1,10 +1,8 @@
 package com.example.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,15 +10,19 @@ import java.util.List;
 @Table(name = "roles")
 @Getter
 @Setter
-
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@ToString(exclude = "users")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, unique = true, length = 30)
     private String name;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "role")
     private List<User> users;
 }

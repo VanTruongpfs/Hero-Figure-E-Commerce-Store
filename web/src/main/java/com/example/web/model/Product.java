@@ -64,13 +64,19 @@ public class Product {
     private BigDecimal price;
 
     @Column(name = "discount_price", precision = 15, scale = 2)
+    @Builder.Default
     private BigDecimal discountPrice = BigDecimal.ZERO;
 
-    private int stock;
+    @Column(nullable = false)
+    @Builder.Default
+    private int stock = 0;
 
+    @Column(nullable = false)
+    @Builder.Default
     private int sold = 0;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean status = true;
 
     @Column(name = "created_at", nullable = false)
@@ -78,4 +84,19 @@ public class Product {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

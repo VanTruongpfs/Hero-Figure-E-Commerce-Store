@@ -1,10 +1,7 @@
 package com.example.web.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Promotion {
 
     @Id
@@ -35,6 +33,7 @@ public class Promotion {
     private BigDecimal discountValue;
 
     @Column(name = "minimum_order_amount", precision = 15, scale = 2)
+    @Builder.Default
     private BigDecimal minimumOrderAmount = BigDecimal.ZERO;
 
     @Column(name = "maximum_discount_amount", precision = 15, scale = 2)
@@ -49,13 +48,20 @@ public class Promotion {
     private int usageLimit;
 
     @Column(nullable = false)
+    @Builder.Default
     private int usageCount = 0;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
+    @Builder.Default
     private boolean status = true;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }

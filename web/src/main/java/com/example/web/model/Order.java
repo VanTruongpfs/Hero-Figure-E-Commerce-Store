@@ -53,6 +53,7 @@ public class Order {
     private BigDecimal subtotal;
 
     @Column(name = "discount_amount", nullable = false, precision = 15, scale = 2)
+    @Builder.Default
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
     @Column(name = "shipping_fee", nullable = false, precision = 15, scale = 2)
@@ -63,6 +64,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false, length = 30)
+    @Builder.Default
     private OrderStatus orderStatus = OrderStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
@@ -71,6 +73,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false, length = 30)
+    @Builder.Default
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @Column(name = "transaction_code", length = 150)
@@ -84,16 +87,25 @@ public class Order {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void generateOrderCode() {
-        if(orderCode == null) {
-            orderCode = "ORD-"+UUID.randomUUID().toString()
-                    .toString()
-                    .substring(0, 8)
-                    .toUpperCase();
+    public void prePersist() {
+        if (orderCode == null) {
+            orderCode = "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }
